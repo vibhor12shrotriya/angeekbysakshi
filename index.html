@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angeek By Sakshi — Studio Billing</title>
+  <meta name="description" content="Internal billing and inventory management for Angeek By Sakshi lehenga studio" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+  <aside id="sidebar">
+    <div class="sidebar-logo">
+      <h1>Angeek By Sakshi</h1>
+      <p>Lehenga &amp; Indo-Western</p>
+    </div>
+    <nav>
+      <div class="nav-section">
+        <div class="nav-label">Main</div>
+        <div class="nav-item active" data-page="dashboard">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 6a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item" data-page="billing">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"/></svg>
+          New Bill
+        </div>
+        <div class="nav-item" data-page="invoices">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+          Invoices
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Manage</div>
+        <div class="nav-item" data-page="customers">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z"/></svg>
+          Customers
+        </div>
+        <div class="nav-item" data-page="inventory">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+          Inventory
+        </div>
+        <div class="nav-item" data-page="payments">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"/><path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"/></svg>
+          Payments
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Analytics</div>
+        <div class="nav-item" data-page="reports">
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+          Reports
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-pill">
+        <div class="user-avatar">AS</div>
+        <div>
+          <div class="user-name">Angeek Studio</div>
+          <div class="user-role">Admin</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+  <main id="main">
+    <!-- pages loaded via JS includes -->
+    <div id="page-dashboard" class="page active"></div>
+    <div id="page-billing" class="page"></div>
+    <div id="page-invoices" class="page"></div>
+    <div id="page-customers" class="page"></div>
+    <div id="page-inventory" class="page"></div>
+    <div id="page-payments" class="page"></div>
+    <div id="page-reports" class="page"></div>
+  </main>
+
+</div>
+
+<!-- ═══════════════════ GLOBAL MODALS ═══════════════════ -->
+<div id="invoice-modal" class="modal-overlay" style="display:none" aria-modal="true" role="dialog"></div>
+<div id="whatsapp-modal" class="modal-overlay" style="display:none" aria-modal="true" role="dialog"></div>
+<div id="confirm-modal" class="modal-overlay" style="display:none" aria-modal="true" role="dialog"></div>
+
+<!-- ═══════════════════ TOAST ═══════════════════ -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+<script src="js/billing.js"></script>
+<script src="js/invoices.js"></script>
+<script src="js/customers.js"></script>
+<script src="js/inventory.js"></script>
+<script src="js/payments.js"></script>
+<script src="js/reports.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/whatsapp.js"></script>
+<script src="js/pdf.js"></script>
+<script>
+  // Bootstrap
+  window.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
