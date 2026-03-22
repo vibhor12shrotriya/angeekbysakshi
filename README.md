@@ -65,7 +65,7 @@ README.md
 cd angeek-studio
 git init
 git add .
-git commit -m "Initial commit — Angeek Studio Billing"
+git commit -m "Initial commit — Angeek By Studio Billing"
 git remote add origin https://github.com/YOUR_USERNAME/angeek-studio-billing.git
 git push -u origin main
 ```
@@ -216,14 +216,14 @@ Edit `js/data.js` to update:
 const STUDIO = {
   name:    'Angeek By Sakshi',      // Your studio name
   tagline: 'Premium Lehenga...',    // Shown on invoices
-  address: 'Gurugram, Haryana',
-  phone:   '+91 98765 43210',
+  address: 'Udaipur, Rajasthan',
+  phone:   '+91 91169 63601 ',
   email:   'angeekbysakshi@gmail.com',
   invoicePrefix: 'INV',             // e.g. ABS → ABS-2025-001
-  invoiceYear:   '2025',
+  invoiceYear:   '2026',
 };
 ```
 
 ---
 
-*Built for Angeek By Sakshi · Gurugram · 2025*
+*Built for Angeek By Sakshi · Udaipur · 2026*
