@@ -13,7 +13,7 @@ const STUDIO = {
   invoicePrefix: 'INV',
   invoiceYear:   '2026',
   nextInvoiceNum: 45,
-  gstEnabled: false,
+  gstEnabled: true,
   gstin:    '',
   gstRate:  12,
   returnPolicy: 'Items must be returned by the agreed date in original condition. Late returns will incur the late fee specified in the invoice. Security deposit is refundable after satisfactory inspection of the returned outfit.'
