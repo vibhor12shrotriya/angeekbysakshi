@@ -12,7 +12,7 @@ const STUDIO = {
   email:   'angeekbysakshi@gmail.com',
   invoicePrefix: 'INV',
   invoiceYear:   '2026',
-  nextInvoiceNum: 45,
+  nextInvoiceNum: 46,
   gstEnabled: true,
   gstin:    '',
   gstRate:  12,
