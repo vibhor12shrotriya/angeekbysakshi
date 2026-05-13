@@ -957,15 +957,19 @@ const Billing = (() => {
     render();
   }
 
-  function generate() {
+  async function generate() {
     const name   = Utils.sanitize(Utils.val('b-name'));
     const mobile = Utils.cleanMobile(Utils.val('b-mobile'));
     const code   = Utils.sanitize(Utils.val('b-code'));
 
     if (!name)   { Utils.toast('Please enter customer name', 'error'); return; }
     if (!mobile) { Utils.toast('Please enter mobile number', 'error'); return; }
-    if (billType === 'rent' && !Utils.val('b-rent')) { Utils.toast('Please enter rent amount', 'error'); return; }
+    if (billType === 'rent' && !Utils.val('b-rent'))  { Utils.toast('Please enter rent amount', 'error'); return; }
     if (billType === 'sale' && !Utils.val('b-price')) { Utils.toast('Please enter sale price', 'error'); return; }
+
+    // disable button to prevent double submit
+    const btn = document.querySelector('[onclick="Billing.generate()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
 
     // Upsert customer
     let customer = Store.getCustomerByMobile(mobile);
@@ -976,7 +980,7 @@ const Billing = (() => {
         address: Utils.sanitize(Utils.val('b-address')),
         since:   Utils.today(),
       };
-      Store.saveCustomer(customer);
+      await Store.saveCustomer(customer);
     }
 
     // Build invoice
@@ -995,27 +999,27 @@ const Billing = (() => {
       inventoryId:    null,
       rentAmount:     billType === 'rent' ? Utils.num(Utils.val('b-rent'))    : null,
       deposit:        billType === 'rent' ? Utils.num(Utils.val('b-deposit')) : 0,
-      lateFeePerDay:  billType === 'rent' ? Utils.num(Utils.val('b-latefee')): 0,
+      lateFeePerDay:  billType === 'rent' ? Utils.num(Utils.val('b-latefee')) : 0,
       salePrice:      billType === 'sale' ? Utils.num(Utils.val('b-price'))   : null,
       discount:       billType === 'sale' ? Utils.num(Utils.val('b-disc'))    : 0,
-      discountType:   billType === 'sale' ? (Utils.val('b-disc-type')||'flat'): 'flat',
+      discountType:   billType === 'sale' ? (Utils.val('b-disc-type') || 'flat') : 'flat',
       rentFrom:       billType === 'rent' ? Utils.val('b-from') : null,
       rentTo:         billType === 'rent' ? Utils.val('b-to')   : null,
       paymentMode:    Utils.val('b-paymode') || 'cash',
       amountPaid:     Utils.num(Utils.val('b-paid')),
-      depositRefunded:false,
+      depositRefunded: false,
       returnStatus:   billType === 'rent' ? 'active' : 'na',
       status:         Utils.invoiceStatus({
-        type:       billType,
-        rentAmount: Utils.num(Utils.val('b-rent')),
-        deposit:    Utils.num(Utils.val('b-deposit')),
-        salePrice:  Utils.num(Utils.val('b-price')),
-        discount:   Utils.num(Utils.val('b-disc')),
+        type:        billType,
+        rentAmount:  Utils.num(Utils.val('b-rent')),
+        deposit:     Utils.num(Utils.val('b-deposit')),
+        salePrice:   Utils.num(Utils.val('b-price')),
+        discount:    Utils.num(Utils.val('b-disc')),
         discountType: Utils.val('b-disc-type') || 'flat',
-        amountPaid: Utils.num(Utils.val('b-paid')),
+        amountPaid:  Utils.num(Utils.val('b-paid')),
       }),
-      createdAt:      Utils.today(),
-      notes:          Utils.sanitize(Utils.val('b-notes')),
+      createdAt: Utils.today(),
+      notes:     Utils.sanitize(Utils.val('b-notes')),
     };
 
     // Update inventory status if code matched
@@ -1023,16 +1027,16 @@ const Billing = (() => {
       const outfit = Store.getInventoryByCode(code);
       if (outfit) {
         inv.inventoryId = outfit.id;
-        outfit.status = billType === 'rent' ? 'rented' : 'sold';
-        Store.saveInventoryItem(outfit);
+        outfit.status   = billType === 'rent' ? 'rented' : 'sold';
+        await Store.saveInventoryItem(outfit);
       }
     }
 
-    Store.saveInvoice(inv);
+    await Store.saveInvoice(inv);
 
-    // Record payment if paid amount > 0
+    // Record payment
     if (inv.amountPaid > 0) {
-      Store.savePayment({
+      await Store.savePayment({
         id:            Store.genId('P'),
         invoiceId:     invId,
         invoiceNumber: invNum,
@@ -1046,7 +1050,7 @@ const Billing = (() => {
 
     Utils.toast(`✓ Invoice ${invNum} generated!`, 'success');
 
-    // Show success modal with actions
+    // Show success modal
     Utils.openModal('invoice-modal', `
       <div class="modal">
         <div class="modal-header">
@@ -1065,7 +1069,7 @@ const Billing = (() => {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
               Send WhatsApp
             </button>
-            <button class="btn btn-primary" onclick="Utils.closeModal('invoice-modal');navigate('billing')">New Bill</button>
+            <button class="btn btn-primary" onclick="Utils.closeModal('invoice-modal');Billing.render()">New Bill</button>
           </div>
         </div>
       </div>
@@ -1288,18 +1292,17 @@ const InvoiceModal = (() => {
     `);
   }
 
-  function markReturned(invId, refundDeposit) {
+  async function markReturned(invId, refundDeposit) {
     const inv = Store.getInvoice(invId);
     if (!inv) return;
-    inv.returnStatus   = 'returned';
-    inv.depositRefunded= refundDeposit;
-    inv.returnedAt     = Utils.today();
-    Store.saveInvoice(inv);
+    inv.returnStatus    = 'returned';
+    inv.depositRefunded = refundDeposit;
+    inv.returnedAt      = Utils.today();
+    await Store.saveInvoice(inv);
 
-    // Update inventory
     if (inv.inventoryId) {
       const item = Store.getInventoryItem(inv.inventoryId);
-      if (item) { item.status = 'available'; Store.saveInventoryItem(item); }
+      if (item) { item.status = 'available'; await Store.saveInventoryItem(item); }
     }
 
     Utils.closeModal('invoice-modal');
@@ -1337,19 +1340,19 @@ const InvoiceModal = (() => {
       </div>`);
   }
 
-  function savePayment(invId) {
+  async function savePayment(invId) {
     const inv    = Store.getInvoice(invId);
     if (!inv) return;
     const amount = Utils.num(Utils.val('pay-amount'));
     const mode   = Utils.val('pay-mode') || 'cash';
     if (!amount) { Utils.toast('Enter payment amount', 'error'); return; }
 
-    inv.amountPaid = (inv.amountPaid || 0) + amount;
+    inv.amountPaid  = (inv.amountPaid || 0) + amount;
     inv.paymentMode = mode;
-    inv.status = Utils.invoiceStatus(inv);
-    Store.saveInvoice(inv);
+    inv.status      = Utils.invoiceStatus(inv);
+    await Store.saveInvoice(inv);
 
-    Store.savePayment({
+    await Store.savePayment({
       id: Store.genId('P'), invoiceId: invId, invoiceNumber: inv.number,
       customerName: inv.customerName, amount, mode,
       date: Utils.today(), note: 'Additional payment',
@@ -1660,7 +1663,7 @@ const Inventory = (() => {
       </div>`);
   }
 
-  function save(id) {
+  async function save(id) {
     const code = Utils.sanitize(Utils.val('of-code'));
     const name = Utils.sanitize(Utils.val('of-name'));
     if (!code || !name) { Utils.toast('Code and name are required', 'error'); return; }
@@ -1675,15 +1678,19 @@ const Inventory = (() => {
       salePrice: Utils.num(Utils.val('of-sale')) || null,
       status:    id ? (Utils.val('of-status') || 'available') : 'available',
     };
-    Store.saveInventoryItem(item);
+
+    const btn = document.querySelector('[onclick="Inventory.save(\'' + id + '\')"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+    await Store.saveInventoryItem(item);
     Utils.closeModal('confirm-modal');
-    Utils.toast(`✓ ${name} ${id?'updated':'added'}`, 'success');
+    Utils.toast(`✓ ${name} ${id ? 'updated' : 'added'}`, 'success');
     render();
   }
 
   function remove(id) {
-    Utils.confirm('Delete this outfit from inventory?', () => {
-      Store.deleteInventoryItem(id);
+    Utils.confirm('Delete this outfit from inventory?', async () => {
+      await Store.deleteInventoryItem(id);
       Utils.toast('Outfit removed', 'success');
       render();
     });
@@ -1865,19 +1872,27 @@ const Payments = (() => {
     if (inv) Utils.setVal('rp-amount', Utils.calcInvoice(inv).balance);
   }
 
-  function saveRecord() {
+  async function saveRecord() {
     const invId  = Utils.val('rp-inv');
     const amount = Utils.num(Utils.val('rp-amount'));
     const mode   = Utils.val('rp-mode');
     if (!invId)  { Utils.toast('Select an invoice', 'error'); return; }
     if (!amount) { Utils.toast('Enter amount', 'error'); return; }
+
     const inv = Store.getInvoice(invId);
     if (!inv) return;
-    inv.amountPaid = (inv.amountPaid||0) + amount;
-    inv.status = Utils.invoiceStatus(inv);
-    Store.saveInvoice(inv);
-    Store.savePayment({ id: Store.genId('P'), invoiceId: invId, invoiceNumber: inv.number,
-      customerName: inv.customerName, amount, mode, date: Utils.today(), note: 'Payment' });
+
+    const btn = document.querySelector('[onclick="Payments.saveRecord()"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+
+    inv.amountPaid = (inv.amountPaid || 0) + amount;
+    inv.status     = Utils.invoiceStatus(inv);
+    await Store.saveInvoice(inv);
+    await Store.savePayment({
+      id: Store.genId('P'), invoiceId: invId, invoiceNumber: inv.number,
+      customerName: inv.customerName, amount, mode, date: Utils.today(), note: 'Payment'
+    });
+
     Utils.closeModal('confirm-modal');
     Utils.toast(`✓ ${Utils.inr(amount)} recorded`, 'success');
     render();
@@ -2020,11 +2035,11 @@ const Reports = (() => {
     render();
   }
 
-  function saveGST() {
-    const studio = Store.getStudio();
+  async function saveGST() {
+    const studio   = Store.getStudio();
     studio.gstin   = Utils.val('gst-in');
     studio.gstRate = Utils.num(Utils.val('gst-rate'));
-    Store.saveStudio(studio);
+    await Store.saveStudio(studio);
     Utils.toast('GST settings saved', 'success');
     render();
   }
