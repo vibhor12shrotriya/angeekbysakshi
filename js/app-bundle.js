@@ -2664,11 +2664,8 @@ const App = (() => {
   }
 
   // ── Init ──
-  function init() {
-    // Seed data
-    Store.init();
-
-    // Wire navigation
+  async function init() {
+    await Store.init();
     wireNav();
 
     // Load initial page from hash or default
